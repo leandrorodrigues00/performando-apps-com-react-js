@@ -1,21 +1,39 @@
-import { memo } from "react";
+import { memo, useState } from "react";
+import { AddProductToWishlist } from "./addProductToWishlist";
 
 interface ProductItemProps {
   product: {
     id: number;
     price: number;
+    priceFormatted: string;
     title: string;
   };
+  onAddToWishList: (id: Number) => void;
 }
 
-function ProductItemComponent({ product }: ProductItemProps) {
+function ProductItemComponent({ product, onAddToWishList }: ProductItemProps) {
+  const [isAddToWishList, setIsAddToWishList] = useState(false);
+
   return (
     <div>
-      {product.title} - <strong>{product.price}</strong>
+      {product.title} - <strong>{product.priceFormatted}</strong>
+      <button onClick={() => setIsAddToWishList(true)}>
+        Adicionar aos favoritos
+      </button>
+
+        { isAddToWishList && (
+               <AddProductToWishlist
+               onAddToWishList={() => onAddToWishList(product.id)}
+               onRequestClose={() => setIsAddToWishList(false)}
+             />
+        )}
     </div>
   );
 }
 
-export const ProductItem = memo(ProductItemComponent, (prevProps, nextProps) => {
-        return Object.is(prevProps.product, nextProps.product);
-});
+export const ProductItem = memo(
+  ProductItemComponent,
+  (prevProps, nextProps) => {
+    return Object.is(prevProps.product, nextProps.product);
+  }
+);
